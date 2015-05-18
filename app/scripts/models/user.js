@@ -224,6 +224,9 @@ define([
 
     signInAccount: function (account, relier) {
       var self = this;
+      // Try to sign the user in before checking whether the
+      // passwords are the same. If the user typed the incorrect old
+      // password, they should know that first.
       return account.signIn(relier)
         .then(function () {
           // If there's an account with the same uid in localStorage we merge
@@ -244,6 +247,14 @@ define([
     signUpAccount: function (account, relier) {
       var self = this;
       return account.signUp(relier)
+        .then(function () {
+          return self.setSignedInAccount(account);
+        });
+    },
+
+    changeAccountPassword: function (account, oldPassword, newPassword, relier) {
+      var self = this;
+      return account.changePassword(oldPassword, newPassword, relier)
         .then(function () {
           return self.setSignedInAccount(account);
         });
