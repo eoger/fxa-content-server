@@ -15,9 +15,10 @@
 'use strict';
 
 define([
+  'underscore',
   'jquery',
   'lib/promise'
-], function ($, p) {
+], function (_, $, p) {
   var DEFAULT_DATA_TYPE = 'json';
 
   return {
@@ -43,6 +44,40 @@ define([
       }
 
       return p.jQueryXHR($.ajax(options));
+    },
+
+    /**
+     * Low level ajax functionality for OAuth. Sets the `Authorization` header
+     * from `options.accessToken`
+     *
+     * @return {promise}
+     */
+    oauthAjax: function (options) {
+      var request = {
+        url: options.url,
+        // make sure to set the dataType for Firefox <21. See issue #1930
+        dataType: 'json',
+        type: options.type,
+        headers: {
+          Authorization: 'Bearer ' + options.accessToken,
+          Accept: 'application/json'
+        }
+      };
+
+      if (options.headers) {
+        _.extend(request.headers, options.headers);
+      }
+
+      var data = options.data;
+      if (data) {
+        request.data = data;
+      }
+
+      if (typeof Blob !== 'undefined' && data instanceof Blob) {
+        request.processData = false;
+      }
+
+      return this.ajax(request);
     },
 
     /**

@@ -15,10 +15,11 @@ define([
   'lib/mailcheck',
   'views/mixins/password-mixin',
   'views/mixins/service-mixin',
+  'views/mixins/checkbox-mixin',
   'views/coppa/coppa-date-picker'
 ],
 function (Cocktail, _, p, BaseView, FormView, Template, AuthErrors, mailcheck,
-      PasswordMixin, ServiceMixin, CoppaDatePicker) {
+      PasswordMixin, ServiceMixin, CheckboxMixin, CoppaDatePicker) {
   var t = BaseView.t;
 
   function selectAutoFocusEl(bouncedEmail, email, password) {
@@ -233,7 +234,8 @@ function (Cocktail, _, p, BaseView, FormView, Template, AuthErrors, mailcheck,
       var account = self.user.initAccount({
         email: self.getElementValue('.email'),
         password: self.getElementValue('.password'),
-        customizeSync: self.$('.customize-sync').is(':checked')
+        customizeSync: self.$('.customize-sync').is(':checked'),
+        needsOptedInToMarketingEmail: self.$('.marketing-email-optin').is(':checked')
       });
 
       if (preVerifyToken) {
@@ -314,7 +316,8 @@ function (Cocktail, _, p, BaseView, FormView, Template, AuthErrors, mailcheck,
   Cocktail.mixin(
     View,
     PasswordMixin,
-    ServiceMixin
+    ServiceMixin,
+    CheckboxMixin
   );
 
   return View;

@@ -31,5 +31,8 @@
   "csp": {
     "enabled": true,
     "reportUri": "/_/csp-violation"
+  },
+  "marketing_email": {
+    "preferences_url": "https://www-dev.allizom.org/newsletter/existing/"
   }
 }

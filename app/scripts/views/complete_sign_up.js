@@ -60,6 +60,22 @@ function (Cocktail, FormView, BaseView, CompleteSignUpTemplate,
       return self.fxaClient.verifyCode(uid, code)
           .then(function () {
             self.logScreenEvent('verification.success');
+            var account = self.getAccount();
+
+            if (account.get('needsOptedInToMarketingEmail')) {
+              account.unset('needsOptedInToMarketingEmail');
+              // TODO is the account automatically persisted?
+
+              var emailPrefs = account.getMarketingEmailPrefs();
+              return emailPrefs.optIn()
+                .then(function () {
+                  // force a deletion of the access token used to
+                  // update the preferences.
+                  return emailPrefs.destroy();
+                });
+            }
+          })
+          .then(function () {
             return self.broker.afterCompleteSignUp(self.getAccount());
           })
           .then(function (result) {
