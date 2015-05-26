@@ -142,7 +142,7 @@ function (Cocktail, _, p, BaseView, FormView, Template, AuthErrors, mailcheck,
         shouldFocusEmail: autofocusEl === 'email',
         shouldFocusPassword: autofocusEl === 'password',
         error: this.error,
-        communicationPrefsVisible: this._isCommunicationsPrefsVisible()
+        communicationPrefsVisible: this._areCommunicationPrefsVisible()
       };
     },
 
@@ -314,7 +314,7 @@ function (Cocktail, _, p, BaseView, FormView, Template, AuthErrors, mailcheck,
       return this.displayErrorUnsafe(err);
     },
 
-    _isCommunicationsPrefsVisible: function () {
+    _areCommunicationPrefsVisible: function () {
       return this._able.choose('communicationPrefsVisible', {
         lang: navigator.language
       });

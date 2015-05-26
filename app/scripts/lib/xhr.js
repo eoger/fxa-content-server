@@ -50,6 +50,15 @@ define([
      * Low level ajax functionality for OAuth. Sets the `Authorization` header
      * from `options.accessToken`
      *
+     * @method oauthAjax
+     *
+     * @param {Object} options
+     *   @param {String} options.url - url to request
+     *   @param {String} options.type - method used to request - `post`, `get`
+     *   @param {String} options.accessToken - OAuth access token used to
+     *   access resource.
+     *   @param {Object} [options.headers] - headers to send.
+     *   @param {Object} [options.data] - data to send
      * @return {promise}
      */
     oauthAjax: function (options) {
