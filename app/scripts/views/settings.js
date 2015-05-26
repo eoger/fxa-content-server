@@ -35,7 +35,7 @@ function (Cocktail, Session, FormView, BaseView, AvatarMixin,
         email: email,
         showSignOut: !account.isFromSync(),
         avatarLinkVisible: this._isAvatarLinkVisible(email),
-        communicationsPrefsAvailable: this._isCommunicationsPrefsAvailable()
+        communicationPrefsVisible: this._isCommunicationsPrefsVisible()
       };
     },
 
@@ -80,8 +80,8 @@ function (Cocktail, Session, FormView, BaseView, AvatarMixin,
       return isTestAccount || this._able.choose('avatarLinkVisible', { email: email });
     },
 
-    _isCommunicationsPrefsAvailable: function () {
-      return this._able.choose('communicationsPrefsAvailable', {
+    _isCommunicationsPrefsVisible: function () {
+      return this._able.choose('communicationPrefsVisible', {
         lang: navigator.language
       });
     },

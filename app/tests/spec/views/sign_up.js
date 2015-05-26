@@ -161,6 +161,32 @@ function (chai, $, sinon, p, View, Coppa, Session, AuthErrors, Metrics,
               assert.include(view.$('#fxa-signup-header').text(), serviceName);
             });
       });
+
+      describe('email opt in', function () {
+        it('is visible if enabled', function () {
+          sinon.stub(able, 'choose', function () {
+            return true;
+          });
+
+          return view.render()
+            .then(function () {
+              assert.isTrue(able.choose.calledWith('communicationPrefsVisible'));
+              assert.equal(view.$('#marketing-email-optin').length, 1);
+            });
+        });
+
+        it('is not visible if disabled', function () {
+          sinon.stub(able, 'choose', function () {
+            return false;
+          });
+
+          return view.render()
+            .then(function () {
+              assert.isTrue(able.choose.calledWith('communicationPrefsVisible'));
+              assert.equal(view.$('#marketing-email-optin').length, 0);
+            });
+        });
+      });
     });
 
     describe('afterVisible', function () {
