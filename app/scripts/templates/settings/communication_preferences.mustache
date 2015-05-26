@@ -6,11 +6,16 @@
   <section>
     <div class="error"></div>
 
-    <form novalidate>
+    <!--form novalidate-->
       <div class="input-row marketing-email-optin-row">
           <label><input id="marketing-email-optin" type="checkbox" class="marketing-email-optin" {{#isOptedIn}}checked="checked"{{/isOptedIn}}> {{#t}}Get the latest news about Mozilla and Firefox.{{/t}}</label>
       </div>
-    </form>
+
+      <!--div class="button-row">
+        <button id="submit-btn" type="submit">{{#t}}Save{{/t}}</button>
+      </div-->
+
+    <!--/form-->
 
     <ul class="links">
       {{#preferencesUrl}}

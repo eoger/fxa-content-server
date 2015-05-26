@@ -42,6 +42,7 @@ function (Cocktail, _, p, BaseView, FormView, Template, AuthErrors, mailcheck,
 
       this._formPrefill = options.formPrefill;
       this._coppa = options.coppa;
+      this._able = options.able;
     },
 
     beforeRender: function () {
@@ -140,7 +141,8 @@ function (Cocktail, _, p, BaseView, FormView, Template, AuthErrors, mailcheck,
         password: prefillPassword,
         shouldFocusEmail: autofocusEl === 'email',
         shouldFocusPassword: autofocusEl === 'password',
-        error: this.error
+        error: this.error,
+        communicationsPrefsAvailable: this._isCommunicationsPrefsAvailable()
       };
     },
 
@@ -310,6 +312,12 @@ function (Cocktail, _, p, BaseView, FormView, Template, AuthErrors, mailcheck,
     _suggestSignIn: function (err) {
       err.forceMessage = t('Account already exists. <a href="/signin">Sign in</a>');
       return this.displayErrorUnsafe(err);
+    },
+
+    _isCommunicationsPrefsAvailable: function () {
+      return this._able.choose('communicationsPrefsAvailable', {
+        lang: navigator.language
+      });
     }
   });
 

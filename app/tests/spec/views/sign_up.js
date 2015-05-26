@@ -18,6 +18,7 @@ define([
   'lib/fxa-client',
   'lib/ephemeral-messages',
   'lib/mailcheck',
+  'lib/able',
   'models/reliers/fx-desktop',
   'models/auth_brokers/base',
   'models/user',
@@ -26,7 +27,7 @@ define([
   '../../lib/helpers'
 ],
 function (chai, $, sinon, p, View, Coppa, Session, AuthErrors, Metrics,
-      FxaClient, EphemeralMessages, mailcheck, Relier, Broker, User, FormPrefill,
+      FxaClient, EphemeralMessages, mailcheck, Able, Relier, Broker, User, FormPrefill,
       RouterMock, TestHelpers) {
   var assert = chai.assert;
 
@@ -42,6 +43,7 @@ function (chai, $, sinon, p, View, Coppa, Session, AuthErrors, Metrics,
     var user;
     var formPrefill;
     var coppa;
+    var able;
 
     function fillOutSignUp(email, password, isCoppaValid) {
       view.$('[type=email]').val(email);
@@ -65,7 +67,8 @@ function (chai, $, sinon, p, View, Coppa, Session, AuthErrors, Metrics,
         ephemeralMessages: ephemeralMessages,
         screenName: 'signup',
         formPrefill: formPrefill,
-        coppa: coppa
+        coppa: coppa,
+        able: able
       });
     }
 
@@ -84,6 +87,7 @@ function (chai, $, sinon, p, View, Coppa, Session, AuthErrors, Metrics,
       });
       formPrefill = new FormPrefill();
       coppa = new Coppa();
+      able = new Able();
 
       createView();
 

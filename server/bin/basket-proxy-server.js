@@ -116,7 +116,10 @@ function initApp() {
   }));
 
   app.post('/subscribe', verifyOAuthToken(function (creds, req, res) {
-    forwardBasketResponse(res, '/subscribe/', 'post', {
+    // Basket is slow, don't wait around for its response.
+    res.json({ status: 'ok' });
+
+    basketRequest('/subscribe/', 'post', {
       email: creds.email,
       newsletters: req.body.newsletters.join(','),
       optin: 'Y'
@@ -124,6 +127,9 @@ function initApp() {
   }));
 
   app.post('/unsubscribe', verifyOAuthToken(function (creds, req, res) {
+    // Basket is slow, don't wait around for its response.
+    res.json({ status: 'ok' });
+
     basketRequest('/lookup-user/?email=' + creds.email, 'get')
       .then(function (body) {
         var token;
@@ -133,7 +139,7 @@ function initApp() {
           return res.status(400).send('error');
         }
 
-        return forwardBasketResponse(res, '/unsubscribe/' + token + '/', 'post', {
+        basketRequest('/unsubscribe/' + token + '/', 'post', {
           email: creds.email,
           newsletters: req.body.newsletters.join(',')
         });

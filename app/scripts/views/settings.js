@@ -29,10 +29,13 @@ function (Cocktail, Session, FormView, BaseView, AvatarMixin,
 
     context: function () {
       var account = this.getSignedInAccount();
+      var email = account.get('email');
+
       return {
-        email: account.get('email'),
+        email: email,
         showSignOut: !account.isFromSync(),
-        avatarLinkVisible: this._isAvatarLinkVisible(account.get('email'))
+        avatarLinkVisible: this._isAvatarLinkVisible(email),
+        communicationsPrefsAvailable: this._isCommunicationsPrefsAvailable()
       };
     },
 
@@ -75,6 +78,12 @@ function (Cocktail, Session, FormView, BaseView, AvatarMixin,
       var isTestAccount = /^avatarAB-.+@restmail\.net$/.test(email);
 
       return isTestAccount || this._able.choose('avatarLinkVisible', { email: email });
+    },
+
+    _isCommunicationsPrefsAvailable: function () {
+      return this._able.choose('communicationsPrefsAvailable', {
+        lang: navigator.language
+      });
     },
 
     afterVisible: function () {

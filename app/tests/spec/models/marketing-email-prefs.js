@@ -69,7 +69,17 @@ function (chai, sinon, p, Constants, MarketingEmailClient,
     });
 
     describe('optIn', function () {
-      it('opts the user in to marketing email', function () {
+      it('does nothing if the user is already opted in', function () {
+        sinon.spy(marketingEmailClient, 'optIn');
+
+        marketingEmailPrefs.set('newsletters', [NEWSLETTER_ID]);
+        return marketingEmailPrefs.optIn(NEWSLETTER_ID)
+          .then(function () {
+            assert.isFalse(marketingEmailClient.optIn.called);
+          });
+      });
+
+      it('opts the user in to marketing email if not opted already in', function () {
         sinon.stub(marketingEmailClient, 'optIn', function () {
           return p();
         });
@@ -89,7 +99,17 @@ function (chai, sinon, p, Constants, MarketingEmailClient,
     });
 
     describe('optOut', function () {
-      it('opts the user out of marketing email', function () {
+      it('does nothing if not opted in', function () {
+        sinon.spy(marketingEmailClient, 'optOut');
+
+        marketingEmailPrefs.set('newsletters', []);
+        return marketingEmailPrefs.optOut(NEWSLETTER_ID)
+          .then(function () {
+            assert.isFalse(marketingEmailClient.optOut.called);
+          });
+      });
+
+      it('opts the user out of marketing email if opted in', function () {
         sinon.stub(marketingEmailClient, 'optOut', function () {
           return p();
         });

@@ -69,18 +69,24 @@ define([
 
     optIn: function (newsletterId) {
       var self = this;
+      if (self.isOptedIn(newsletterId)) {
+        return p();
+      }
+
       return self._withMarketingEmailClient('optIn', newsletterId)
         .then(function () {
-          if (! self.isOptedIn(newsletterId)) {
-            var newsletters = self.get('newsletters');
-            newsletters.push(newsletterId);
-            self.set('newsletters', newsletters);
-          }
+          var newsletters = self.get('newsletters');
+          newsletters.push(newsletterId);
+          self.set('newsletters', newsletters);
         });
     },
 
     optOut: function (newsletterId) {
       var self = this;
+      if (! self.isOptedIn(newsletterId)) {
+        return p();
+      }
+
       return self._withMarketingEmailClient('optOut', newsletterId)
         .then(function () {
           var newsletters = _.without(self.get('newsletters'), newsletterId);

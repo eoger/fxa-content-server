@@ -5,20 +5,25 @@
 'use strict';
 
 define([
+  'underscore',
   'cocktail',
-  'jquery',
   'lib/xss',
   'lib/constants',
-  'views/base',
+  'views/form',
   'views/mixins/back-mixin',
   'views/mixins/settings-mixin',
+  'stache!templates/loading',
   'stache!templates/settings/communication_preferences'
 ],
-function (Cocktail, $, Xss, Constants, BaseView, BackMixin, SettingsMixin, Template) {
+function (_, Cocktail, Xss, Constants, FormView, BackMixin, SettingsMixin,
+  LoadingTemplate, Template) {
   var NEWSLETTER_ID = Constants.MARKETING_EMAIL_NEWSLETTER_ID;
 
-  var View = BaseView.extend({
-    template: Template,
+  var View = FormView.extend({
+    // email preferences can take a long time to load. Load the "loading"
+    // template while waiting for the prefs to load, then render the
+    // real template.
+    template: LoadingTemplate,
     className: 'communication-preferences',
 
     events: {
@@ -35,23 +40,36 @@ function (Cocktail, $, Xss, Constants, BaseView, BackMixin, SettingsMixin, Templ
       return this._emailPrefs.destroy();
     },
 
-    beforeRender: function () {
-      return this._emailPrefs.fetch();
+    afterRender: function () {
+      var self = this;
+      var emailPrefs = self._emailPrefs;
+      emailPrefs.fetch()
+        .then(function () {
+          var context = _.extend({
+            isOptedIn: emailPrefs.isOptedIn(NEWSLETTER_ID),
+            // preferencesURL is only available if the user is already
+            // registered with basket.
+            preferencesUrl: Xss.href(emailPrefs.get('preferencesUrl'))
+          }, self.getContext());
+
+          self.$el.html(Template(context)); //jshint ignore:line
+        });
     },
 
-    context: function () {
-      var emailPrefs = this._emailPrefs;
-      return {
-        isOptedIn: emailPrefs.isOptedIn(NEWSLETTER_ID),
-        // preferencesURL is only available if the user is already
-        // registered with basket.
-        preferencesUrl: Xss.href(emailPrefs.get('preferencesUrl'))
-      };
+    /*
+    submit: function () {
+      var self = this;
+      return self.onOptInChange()
+        .then(function () {
+          self.navigate('settings');
+        });
     },
+    */
 
-    onOptInChange: function (event) {
-      var isChecked = $(event.currentTarget).is(':checked');
-      this.setOptInStatus(NEWSLETTER_ID, isChecked);
+    onOptInChange: function () {
+      var self = this;
+      var isChecked = self.$('#marketing-email-optin').is(':checked');
+      return self.setOptInStatus(NEWSLETTER_ID, isChecked);
     },
 
     setOptInStatus: function (newsletterId, isOptedIn) {
