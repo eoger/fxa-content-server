@@ -28,6 +28,7 @@ define([
   'lib/config-loader',
   'lib/screen-info',
   'lib/metrics',
+  'lib/storage-metrics',
   'lib/null-metrics',
   'lib/fxa-client',
   'lib/assertion',
@@ -68,6 +69,7 @@ function (
   ConfigLoader,
   ScreenInfo,
   Metrics,
+  StorageMetrics,
   NullMetrics,
   FxaClient,
   Assertion,
@@ -97,18 +99,6 @@ function (
   Notifications,
   CloseButtonView
 ) {
-
-  function isMetricsCollectionEnabled(sampleRate) {
-    return Math.random() <= sampleRate;
-  }
-
-  function createMetrics(sampleRate, options) {
-    if (isMetricsCollectionEnabled(sampleRate)) {
-      return new Metrics(options);
-    }
-
-    return new NullMetrics();
-  }
 
   function Start(options) {
     options = options || {};
@@ -232,7 +222,7 @@ function (
     initializeMetrics: function () {
       var relier = this._relier;
       var screenInfo = new ScreenInfo(this._window);
-      this._metrics = createMetrics(this._config.metricsSampleRate, {
+      this._metrics = this._createMetrics(this._config.metricsSampleRate, {
         lang: this._config.language,
         service: relier.get('service'),
         context: relier.get('context'),
@@ -596,6 +586,24 @@ function (
               }
             });
       });
+    },
+
+    _createMetrics: function (sampleRate, options) {
+      if (this._isAutomatedBrowser()) {
+        return new StorageMetrics(options);
+      } else if (this._isMetricsCollectionEnabled(sampleRate)) {
+        return new Metrics(options);
+      } else {
+        return new NullMetrics();
+      }
+    },
+
+    _isMetricsCollectionEnabled: function (sampleRate) {
+      return Math.random() <= sampleRate;
+    },
+
+    _isAutomatedBrowser: function () {
+      return this._searchParam('automatedBrowser') === 'true';
     }
   };
 
